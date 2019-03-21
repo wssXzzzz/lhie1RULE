@@ -1,0 +1,80 @@
+
+[Proxy Group]
+# 白名单模式 Proxy，黑名单模式 DIRECT
+Final = select,Proxy,DIRECT
+Proxy = select,Auto,Fallback,Japan,America,AllNode,GoldNode,IPLC-03,WTT-DIA-03
+ForeignMedia = select,Proxy,Japan,America,AllNode,GoldNode,IPLC-03,WTT-DIA-03
+DomesticMedia = select,DIRECT,Proxy
+# Apple 服务策略组
+Apple = select,DIRECT,Proxy
+# 去广告以及隐私追踪保护开关（不建议 macOS 开启）
+Advertising = select,DIRECT,REJECT-TINYGIF,REJECT
+# 反运营商及臭名昭著的应用劫持保护开关
+Hijacking = select,DIRECT,REJECT-TINYGIF,REJECT
+Auto = url-test, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&class=gold, url = http://captive.apple.com, interval = 600, timeout = 5, tolerance = 200
+Fallback = fallback, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&area=hk&class=gold, url = http://captive.apple.com, interval = 600, timeout = 2, tolerance = 200
+Japan = url-test, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&area=jp&class=gold, url = http://captive.apple.com, interval = 600, timeout = 5, tolerance = 200
+America = url-test, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&area=us, url = http://captive.apple.com, interval = 600, timeout = 5, tolerance = 200
+AllNode = select, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&type=all
+GoldNode = select, policy-path=https://dler.cloud/link/JOGrqb4c9P9G3MYR?list=1&class=gold
+
+
+
+[Rule]
+DOMAIN-SUFFIX,transrush.com,Proxy
+DOMAIN-SUFFIX,businessad.108sq.cn,REJECT // Added for webpage: http://businessad.108sq.cn/ad/GetAdContent?siteId=35&zoneId=43
+USER-AGENT,AppStore*,Apple
+USER-AGENT,com.apple.appstored*,Apple
+USER-AGENT,TestFlight*,Apple
+DOMAIN-SUFFIX,apple.com,Apple
+DOMAIN-SUFFIX,icloud.com,Apple
+DOMAIN-SUFFIX,itunes.com,Apple
+DOMAIN-SUFFIX,me.com,Apple
+DOMAIN-SUFFIX,mzstatic.com,Apple
+#Surge iOS 远端 RULE-SET 文件更新通知规则
+AND,((DOMAIN,raw.githubusercontent.com), (USER-AGENT,Surge*)),Direct,notification-text="“权哥这下🐮🍺了，远程规则更新了”",notification-interval=3
+#Surge iOS 远端 Policy-path 文件更新通知规则
+AND,((DOMAIN,dler.cloud), (USER-AGENT,Surge*)),Direct,notification-text="“权哥这下🐮🍺了，远程节点更新了”",notification-interval=3
+# Client
+# > Proxy
+PROCESS-NAME,v2ray,DIRECT
+PROCESS-NAME,ss-local,DIRECT
+# > Download
+PROCESS-NAME,aria2c,DIRECT
+PROCESS-NAME,fdm,DIRECT
+PROCESS-NAME,Folx,DIRECT
+PROCESS-NAME,NetTransport,DIRECT
+PROCESS-NAME,Thunder,DIRECT
+PROCESS-NAME,Transmission,DIRECT
+PROCESS-NAME,uTorrent,DIRECT
+PROCESS-NAME,WebTorrent,DIRECT
+PROCESS-NAME,WebTorrent Helper,DIRECT
+# > Exclusions
+DOMAIN,analytics.google.com,Proxy
+DOMAIN,analyticsinsights-pa.googleapis.com,Proxy
+DOMAIN,analyticsreporting.googleapis.com,Proxy
+DOMAIN-SUFFIX,vd.l.qq.com,DIRECT
+# Rulesets
+RULE-SET,SYSTEM,Apple
+# Apple 部分服务加速（App Store、Movies、Music、News 及海外版 Maps）
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Apple.list,Apple
+# 去广告
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Advertising.list,Advertising
+# Hijacking Protection 反运营商及臭名昭著的应用劫持保护
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Hijacking.list,Hijacking,notification-text="⚠️ 遭受劫持，如页面异常请刷新"
+# lhie1去广告
+RULE-SET,https://raw.githubusercontent.com/lhie1/Rules/master/Surge3/reject.list,Advertising
+# ForeignMedia 媒体应用（Youtube、Netflix、HBO、Hulu、BBC iPlayer、Bahamut、myTV SUPER、AbemaTV、encoreTVB、PBS、Amazon Prime Video、Spotify、Pandora 和 JOOX）
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/ForeignMedia.list,ForeignMedia
+# DomesticMedia 媒体应用（愛奇藝台灣站）
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/DomesticMedia.list,DomesticMedia
+# Global 全球加速规则
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Global.list,Proxy
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/Telegram.list,Proxy
+# China 中国直连规则
+RULE-SET,https://raw.githubusercontent.com/ConnersHua/Profiles/master/Surge/Ruleset/China.list,DIRECT
+# Local Area Network
+RULE-SET,LAN,DIRECT
+# GeoIP China
+GEOIP,CN,DIRECT
+FINAL,Final,dns-failed
